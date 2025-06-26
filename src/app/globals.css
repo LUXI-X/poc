@@ -1,5 +1,10 @@
 @import "tailwindcss";
+@import url("https://path-to-geist-fonts/geist-sans.css"); /* Adjust URL */
+@import url("https://path-to-geist-fonts/geist-mono.css"); /* Adjust URL */
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 :root {
   --background: #ffffff;
   --foreground: #171717;
