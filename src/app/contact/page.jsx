@@ -237,7 +237,7 @@ export default function ContactPage() {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-4 py-3 text-teal-900 bg-gray-100 rounded-lg placeholder:text-slate-400 focus:outline-none border-none"
                       placeholder="Your full name"
                     />
                   </div>
@@ -256,7 +256,7 @@ export default function ContactPage() {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-4 py-3 text-teal-900 bg-gray-100 rounded-lg placeholder:text-slate-400 focus:outline-none border-none"
                       placeholder="your.email@example.com"
                     />
                   </div>
@@ -275,7 +275,7 @@ export default function ContactPage() {
                       value={formData.subject}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-4 py-3 text-teal-900 bg-gray-100 rounded-lg placeholder:text-slate-400 focus:outline-none border-none"
                       placeholder="What is this about?"
                     />
                   </div>
@@ -294,7 +294,7 @@ export default function ContactPage() {
                       onChange={handleChange}
                       required
                       rows={5}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
+                      className="w-full px-4 py-3 border border-slate-300   focus:border-transparent resize-none   text-teal-900 bg-gray-100 rounded-lg placeholder:text-slate-400 focus:outline-none border-none"
                       placeholder="Tell us more about your inquiry..."
                     />
                   </div>
