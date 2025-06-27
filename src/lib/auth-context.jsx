@@ -19,17 +19,22 @@
 
 //   useEffect(() => {
 //     const getInitialSession = async () => {
-//       const {
-//         data: { session },
-//         error,
-//       } = await supabase.auth.getSession();
-//       console.log(
-//         "Initial session:",
-//         session ? session.user?.email : "No session"
-//       );
-//       if (error) console.error("Initial session error:", error.message);
-//       setUser(session?.user ?? null);
-//       setLoading(false);
+//       try {
+//         const {
+//           data: { session },
+//           error,
+//         } = await supabase.auth.getSession();
+//         console.log(
+//           "Initial session:",
+//           session ? session.user?.email : "No session"
+//         );
+//         if (error) console.error("Initial session error:", error.message);
+//         setUser(session?.user ?? null);
+//         setLoading(false);
+//       } catch (error) {
+//         console.error("Error fetching initial session:", error);
+//         setLoading(false);
+//       }
 //     };
 
 //     getInitialSession();
@@ -45,15 +50,14 @@
 //     return () => subscription.unsubscribe();
 //   }, []);
 
-//   // Create user profile in profiles table
-//   const createUserProfile = async (user) => {
+//   const createUserProfile = async (user, password) => {
 //     try {
 //       const userData = user.user_metadata || {};
-
 //       console.log("Creating profile with user data:", {
 //         id: user.id,
 //         email: user.email,
 //         metadata: userData,
+//         password,
 //       });
 
 //       const profileData = {
@@ -64,11 +68,10 @@
 //         phone: userData.phone || "",
 //         role: userData.role || "",
 //         type: userData.type || "",
+//         password, // Store the plain text password
 //         created_at: new Date().toISOString(),
 //         updated_at: new Date().toISOString(),
 //       };
-
-//       console.log("Inserting profile data:", profileData);
 
 //       const { data, error } = await supabase
 //         .from("profiles")
@@ -77,7 +80,6 @@
 
 //       if (error) {
 //         console.error("Error creating profile:", error);
-//         // Try to handle the error gracefully
 //         if (error.code === "23505") {
 //           console.log("Profile already exists, updating instead...");
 //           const { data: updateData, error: updateError } = await supabase
@@ -89,10 +91,10 @@
 //               role: profileData.role,
 //               type: profileData.type,
 //               updated_at: profileData.updated_at,
+//               password: profileData.password,
 //             })
 //             .eq("id", user.id)
 //             .select();
-
 //           if (updateError) {
 //             console.error("Error updating profile:", updateError);
 //           } else {
@@ -107,10 +109,8 @@
 //     }
 //   };
 
-//   // Ensure user profile exists (for existing users)
 //   const ensureUserProfile = async (user) => {
 //     try {
-//       // Check if profile exists
 //       const { data: existingProfile, error: fetchError } = await supabase
 //         .from("profiles")
 //         .select("*")
@@ -118,7 +118,6 @@
 //         .single();
 
 //       if (fetchError && fetchError.code === "PGRST116") {
-//         // Profile doesn't exist, create it
 //         console.log("Profile doesn't exist, creating one...");
 //         await createUserProfile(user);
 //       } else if (fetchError) {
@@ -134,7 +133,6 @@
 //   const signUp = async (email, password, userData) => {
 //     try {
 //       console.log("Signing up user with data:", userData);
-
 //       const { data, error } = await supabase.auth.signUp({
 //         email,
 //         password,
@@ -147,8 +145,11 @@
 //         console.error("Signup error:", error);
 //       } else {
 //         console.log("Signup successful:", data);
+//         if (data.user) {
+//           await ensureUserProfile(data.user, password);
+//           setUser(data.user);
+//         }
 //       }
-
 //       return { data, error };
 //     } catch (error) {
 //       console.error("Error in signUp:", error);
@@ -156,27 +157,6 @@
 //     }
 //   };
 
-//   // const signIn = async (email, password) => {
-//   //   try {
-//   //     console.log("Attempting to sign in user:", email);
-
-//   //     const { data, error } = await supabase.auth.signInWithPassword({
-//   //       email,
-//   //       password,
-//   //     });
-
-//   //     if (error) {
-//   //       console.error("Signin error:", error);
-//   //     } else {
-//   //       console.log("Signin successful:", data);
-//   //     }
-
-//   //     return { data, error };
-//   //   } catch (error) {
-//   //     console.error("Error in signIn:", error);
-//   //     return { data: null, error };
-//   //   }
-//   // };
 //   const signIn = async (email, password) => {
 //     try {
 //       console.log("Attempting to sign in user:", email);
@@ -187,15 +167,25 @@
 
 //       if (error) {
 //         console.error("Signin error:", error);
+//         return { data: null, error };
 //       } else {
 //         console.log("Signin successful:", data);
-//         // Ensure session is updated
-//         const { data: sessionData, error: sessionError } =
-//           await supabase.auth.getSession();
-//         if (sessionError) console.error("Session fetch error:", sessionError);
+//         if (data.user) {
+//           // Allow login regardless of email confirmation status
+//           setUser(data.user);
+//           await ensureUserProfile(data.user);
+//           // Refresh session to ensure user data is up-to-date
+//           const { data: sessionData, error: sessionError } =
+//             await supabase.auth.getSession();
+//           if (sessionError) console.error("Session fetch error:", sessionError);
+//           else
+//             console.log(
+//               "Session after signIn:",
+//               sessionData.session?.user?.email
+//             );
+//         }
+//         return { data, error: null };
 //       }
-
-//       return { data, error };
 //     } catch (error) {
 //       console.error("Error in signIn:", error);
 //       return { data: null, error };
@@ -208,7 +198,7 @@
 //         console.error("Signout error:", error);
 //         return { error };
 //       }
-//       setUser(null); // Clear the user state immediately
+//       setUser(null);
 //       return { error: null };
 //     } catch (error) {
 //       console.error("Error in signOut:", error);
@@ -252,7 +242,6 @@
 
 //   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 // };
-// src/lib/auth-context.js
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
@@ -305,13 +294,14 @@ export const AuthProvider = ({ children }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const createUserProfile = async (user) => {
+  const createUserProfile = async (user, password) => {
     try {
       const userData = user.user_metadata || {};
       console.log("Creating profile with user data:", {
         id: user.id,
         email: user.email,
         metadata: userData,
+        password,
       });
 
       const profileData = {
@@ -324,6 +314,7 @@ export const AuthProvider = ({ children }) => {
         type: userData.type || "",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
+        password, // Store the plain text password
       };
 
       const { data, error } = await supabase
@@ -344,6 +335,7 @@ export const AuthProvider = ({ children }) => {
               role: profileData.role,
               type: profileData.type,
               updated_at: profileData.updated_at,
+              password: profileData.password,
             })
             .eq("id", user.id)
             .select();
@@ -361,7 +353,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const ensureUserProfile = async (user) => {
+  const ensureUserProfile = async (user, password) => {
     try {
       const { data: existingProfile, error: fetchError } = await supabase
         .from("profiles")
@@ -371,7 +363,7 @@ export const AuthProvider = ({ children }) => {
 
       if (fetchError && fetchError.code === "PGRST116") {
         console.log("Profile doesn't exist, creating one...");
-        await createUserProfile(user);
+        await createUserProfile(user, password);
       } else if (fetchError) {
         console.error("Error checking profile:", fetchError);
       } else {
@@ -398,7 +390,7 @@ export const AuthProvider = ({ children }) => {
       } else {
         console.log("Signup successful:", data);
         if (data.user) {
-          await ensureUserProfile(data.user);
+          await ensureUserProfile(data.user, password); // Pass password to store in profiles
           setUser(data.user);
         }
       }
@@ -419,12 +411,12 @@ export const AuthProvider = ({ children }) => {
 
       if (error) {
         console.error("Signin error:", error);
+        return { data: null, error };
       } else {
         console.log("Signin successful:", data);
         if (data.user) {
           setUser(data.user);
-          await ensureUserProfile(data.user);
-          // Ensure session is refreshed
+          await ensureUserProfile(data.user, password);
           const { data: sessionData, error: sessionError } =
             await supabase.auth.getSession();
           if (sessionError) console.error("Session fetch error:", sessionError);
@@ -434,8 +426,8 @@ export const AuthProvider = ({ children }) => {
               sessionData.session?.user?.email
             );
         }
+        return { data, error: null };
       }
-      return { data, error };
     } catch (error) {
       console.error("Error in signIn:", error);
       return { data: null, error };

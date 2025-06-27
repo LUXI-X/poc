@@ -6,11 +6,13 @@ import { useData } from "@/lib/data-context";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import RelationshipForm from "@/components/relationship-form";
+import { useAuth } from "@/lib/auth-context"; // Import useAuth
 
 export default function RelationshipDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const { data, loading } = useData();
+  const { user, loading: authLoading } = useAuth(); // Get user and auth loading state
   const [activeTab, setActiveTab] = useState("details");
   const [showEditForm, setShowEditForm] = useState(false);
   const [relationship, setRelationship] = useState(null);
@@ -18,6 +20,13 @@ export default function RelationshipDetailsPage() {
     source: null,
     target: null,
   });
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login");
+    }
+  }, [user, authLoading, router]);
 
   useEffect(() => {
     if (!loading && data && params.id) {
@@ -138,6 +147,20 @@ export default function RelationshipDetailsPage() {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
+
+  // Show loading state if either auth or data is loading
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-teal-50">
+        <Navbar />
+        <div className="container mx-auto px-4 py-16 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
+          <p className="text-slate-600">Loading details...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (loading) {
     return (

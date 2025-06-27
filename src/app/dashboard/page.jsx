@@ -14,6 +14,7 @@ import AdvancedSearch from "@/components/advanced-search";
 import SearchResults from "@/components/search-results";
 import { DataProvider } from "@/lib/data-context";
 import Footer from "@/components/footer";
+import DatabaseOverview from "@/components/database-overview";
 
 export default function DashboardPage() {
   const { user, loading } = useAuth();
@@ -27,7 +28,8 @@ export default function DashboardPage() {
   // Map tabs to their IDs
   const tabs = [
     { id: "overview", label: "Overview" },
-    { id: "graph", label: "Knowledge Graph" },
+    { id: "graphs", label: "Graphs" },
+    { id: "knowledge-graph", label: "Knowledge Graph" },
     { id: "projects", label: "Projects" },
     { id: "employees", label: "Employees" },
     { id: "manage", label: "Data Management" },
@@ -131,7 +133,8 @@ export default function DashboardPage() {
             ))}
           </div>
           {activeTab === "overview" && <CompanyStats />}
-          {activeTab === "graph" && (
+          {activeTab === "graphs" && <DatabaseOverview />}
+          {activeTab === "knowledge-graph" && (
             <GraphVisualization
               selectedNode={selectedNode}
               setSelectedNode={setSelectedNode}

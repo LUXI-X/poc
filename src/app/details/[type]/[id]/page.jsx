@@ -7,11 +7,13 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import NodeForm from "@/components/node-form";
 import DashboardNavbar from "@/components/dashboard-navbar";
+import { useAuth } from "@/lib/auth-context"; // Import useAuth
 
 export default function DetailsPage() {
   const params = useParams();
   const router = useRouter();
   const { data, loading } = useData();
+  const { user, loading: authLoading } = useAuth(); // Get user and auth loading state
   const [activeTab, setActiveTab] = useState("details");
   const [showEditForm, setShowEditForm] = useState(false);
   const [item, setItem] = useState(null);
@@ -19,6 +21,13 @@ export default function DetailsPage() {
     incoming: [],
     outgoing: [],
   });
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login");
+    }
+  }, [user, authLoading, router]);
 
   useEffect(() => {
     if (!loading && data && params.type && params.id) {
@@ -130,6 +139,19 @@ export default function DetailsPage() {
     }
   };
 
+  // Show loading state if either auth or data is loading
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-teal-50">
+        <Navbar />
+        <div className="container mx-auto px-4 py-16 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
+          <p className="text-slate-600">Loading details...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-teal-50">

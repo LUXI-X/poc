@@ -67,6 +67,26 @@ export default function DashboardNavbar() {
             >
               Dashboard
             </Link>
+            <Link
+              href="/dashboard/contact-submission"
+              className="text-slate-600 hover:text-teal-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Contact Us List
+            </Link>
+
+            <Link
+              href="/dashboard/create-user"
+              className="text-slate-600 hover:text-teal-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Create User
+            </Link>
+
+            <Link
+              href="/dashboard/user-list"
+              className="text-slate-600 hover:text-teal-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              User List
+            </Link>
 
             {/* User Profile Dropdown */}
             {user && (
@@ -207,20 +227,29 @@ export default function DashboardNavbar() {
               >
                 Dashboard
               </Link>
-              {/* <Link
-                href="/about"
-                className="text-slate-600 hover:text-teal-600 block px-3 py-2 rounded-md text-base font-medium transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                About
-              </Link>
               <Link
-                href="/contact"
+                href="/dashboard/contact-submission"
                 className="text-slate-600 hover:text-teal-600 block px-3 py-2 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Contact
-              </Link> */}
+                Contact Us List
+              </Link>
+
+              <Link
+                href="/dashboard/create-user"
+                className="text-slate-600 hover:text-teal-600 block px-3 py-2 rounded-md text-base font-medium transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Create User
+              </Link>
+
+              <Link
+                href="/dashboard/user-list"
+                className="text-slate-600 hover:text-teal-600 block px-3 py-2 rounded-md text-base font-medium transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                User List
+              </Link>
 
               {user && (
                 <>

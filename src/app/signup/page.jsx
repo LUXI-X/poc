@@ -291,7 +291,9 @@ export default function SignupPage() {
                     <option value="" disabled>
                       Select Type
                     </option>
-                    <option value="Company">Company</option>
+                    <option disabled value="Company">
+                      Company
+                    </option>
                     <option value="Employee">Employee</option>
                     <option value="Project">Project</option>
                     <option value="Department">Department</option>
