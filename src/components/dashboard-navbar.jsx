@@ -74,12 +74,12 @@ export default function DashboardNavbar() {
               Contact Us List
             </Link>
 
-            <Link
+            {/* <Link
               href="/dashboard/create-user"
               className="text-slate-600 hover:text-teal-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Create User
-            </Link>
+            </Link> */}
 
             <Link
               href="/dashboard/user-list"
@@ -235,13 +235,13 @@ export default function DashboardNavbar() {
                 Contact Us List
               </Link>
 
-              <Link
+              {/* <Link
                 href="/dashboard/create-user"
                 className="text-slate-600 hover:text-teal-600 block px-3 py-2 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Create User
-              </Link>
+              </Link> */}
 
               <Link
                 href="/dashboard/user-list"

@@ -58,7 +58,6 @@ export async function deleteContactSubmission(id) {
   }
 }
 
-// Fetch all profiles
 export async function fetchAllProfiles() {
   try {
     const { data, error } = await supabase
@@ -73,5 +72,41 @@ export async function fetchAllProfiles() {
     return { data, error: null };
   } catch (err) {
     return { data: null, error: err.message };
+  }
+}
+
+export async function updateProfile(id, updates) {
+  try {
+    // Ensure email and password are not included in updates
+    const { email, password, ...allowedUpdates } = updates;
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        ...allowedUpdates,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", id);
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    return { error: null };
+  } catch (err) {
+    return { error: err.message };
+  }
+}
+
+export async function deleteProfile(id) {
+  try {
+    const { error } = await supabase.from("profiles").delete().eq("id", id);
+
+    if (error) {
+      return { error: error.message };
+    }
+
+    return { error: null };
+  } catch (err) {
+    return { error: err.message };
   }
 }
