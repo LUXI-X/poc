@@ -22,7 +22,7 @@ export default function UserListPage() {
     const checkUser = async () => {
       if (authLoading) return;
       if (!user) {
-        router.push(`/login`);
+        router.push(`/login?redirectTo=${encodeURIComponent("/dashboard")}`);
         return;
       }
 

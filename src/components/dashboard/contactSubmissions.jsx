@@ -22,9 +22,7 @@ export default function ContactSubmissionsPage() {
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push(
-        `/login?redirectTo=${encodeURIComponent("/contact-submissions")}`
-      );
+      router.push(`/login?redirectTo=${encodeURIComponent("/dashboard")}`);
     }
   }, [user, authLoading, router]);
 

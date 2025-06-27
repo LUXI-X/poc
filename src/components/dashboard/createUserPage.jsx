@@ -30,7 +30,7 @@ export default function CreateUserPage() {
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push(`/login?redirectTo=${encodeURIComponent("/create-user")}`);
+      router.push(`/login?redirectTo=${encodeURIComponent("/dashboard")}`);
     }
   }, [user, authLoading, router]);
 
